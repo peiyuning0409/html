@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>煜宁科技极客空间 | 名片·游戏·全矩阵导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 30% 10%, #0b0f1a, #010101);
+            font-family: 'Inter', 'Segoe UI', 'Poppins', 'Orbitron', system-ui, monospace;
+            padding: 1.8rem 1.5rem;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        /* 增强动态科技网格 + 星河光晕 + 流光粒子 + 光晕动画 */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.04) 0px, rgba(0, 255, 255, 0.04) 1px, transparent 1px, transparent 18px),
+                repeating-linear-gradient(90deg, rgba(0, 255, 255, 0.04) 0px, rgba(0, 255, 255, 0.04) 1px, transparent 1px, transparent 18px),
+                radial-gradient(circle at 80% 30%, rgba(0,180,255,0.15), transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 6s infinite alternate;
+        }
+        @keyframes bgPulse {
+            0% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
+        /* 动态浮游粒子层 */
+        .particle-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            background: rgba(0, 255, 255, 0.4);
+            border-radius: 50%;
+            box-shadow: 0 0 8px cyan;
+            animation: floatParticle linear infinite;
+        }
+        @keyframes floatParticle {
+            0% { transform: translateY(100vh) translateX(-20px); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-20vh) translateX(20px); opacity: 0; }
+        }
+
+        .master-container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            z-index: 10;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        /* ---------- 高级科技名片 ---------- */
+        .tech-card {
+            background: rgba(8, 18, 28, 0.65);
+            backdrop-filter: blur(14px);
+            border-radius: 2.5rem;
+            border: 1px solid rgba(0, 255, 255, 0.5);
+            box-shadow: 0 25px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,255,255,0.2) inset;
+            transition: 0.3s;
+            overflow: hidden;
+            animation: auroraPulse 3s infinite ease-in-out;
+        }
+        .card-inner { padding: 2rem 2rem; display: flex; flex-direction: column; gap: 1.6rem; }
+        .hero-section { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; border-bottom: 1px solid rgba(0,255,255,0.3); padding-bottom: 1rem; justify-content: space-between; }
+        .hero-left { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+        .avatar-frame {
+            width: 85px; height: 85px;
+            background: linear-gradient(145deg, #0e1a24, #010a12);
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 0 1px #0ff3;
+        }
+        .avatar-inner {
+            width: 72px; height: 72px;
+            background: radial-gradient(circle at 30% 30%, #0ff, #0055aa);
+            border-radius: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.6rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 0 8px cyan;
+        }
+        .name-title h1 {
+            font-size: 2.4rem;
+            background: linear-gradient(135deg, #FFF, #7ff7ff, #2ccdff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .glow-tag {
+            background: rgba(0,255,255,0.12);
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #afffff;
+            border: 0.5px solid cyan;
+            display: inline-block;
+        }
+        .personal-collection-btn {
+            background: rgba(0, 255, 255, 0.15);
+            border: 1px solid cyan;
+            border-radius: 60px;
+            padding: 0.6rem 1.4rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            font-family: 'Orbitron', monospace;
+            color: #0ff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 0 12px rgba(0,255,255,0.3);
+        }
+        .personal-collection-btn:hover {
+            background: cyan;
+            color: #000;
+            box-shadow: 0 0 25px cyan;
+            transform: scale(1.02);
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 1rem;
+        }
+        .info-item {
+            background: rgba(0,20,30,0.5);
+            border-radius: 1.5rem;
+            padding: 0.9rem 1.2rem;
+            border-left: 3px solid #0ff;
+            transition: 0.2s;
+        }
+        .info-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: #7bc5d0; }
+        .info-value { font-size: 0.9rem; font-weight: 500; color: #eef5ff; word-break: break-all; font-family: monospace; }
+        .status-bar {
+            background: rgba(0,0,0,0.5);
+            border-radius: 60px;
+            padding: 0.5rem 1.2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            border: 1px solid rgba(0,255,255,0.3);
+        }
+        .bilibili-link {
+            font-family: 'Orbitron', monospace;
+            background: rgba(0, 150, 200, 0.2);
+            padding: 4px 12px;
+            border-radius: 40px;
+            transition: 0.2s;
+            border: 0.5px solid cyan;
+        }
+        .bilibili-link a {
+            color: #aaffff;
+            text-decoration: none;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .bilibili-link:hover {
+            background: rgba(0, 210, 255, 0.4);
+            box-shadow: 0 0 8px cyan;
+        }
+        .action-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .cyber-btn {
+            background: rgba(0,20,30,0.7);
+            border: 1px solid cyan;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            color: #bbf5ff;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: monospace;
+        }
+
+        /* ========= 游戏卡片区 ========= */
+        .games-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .game-card {
+            background: rgba(2, 12, 20, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            border: 1px solid rgba(0, 255, 200, 0.5);
+            overflow: hidden;
+            transition: 0.2s;
+            animation: cardGlow 3s infinite alternate;
+        }
+        .game-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem 1.8rem;
+            background: #07131cee;
+            border-bottom: 1px solid cyan;
+            flex-wrap: wrap;
+        }
+        .game-title {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: #8effff;
+            text-shadow: 0 0 3px cyan;
+        }
+        .game-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .game-btn {
+            background: none;
+            border: 1px solid cyan;
+            color: cyan;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-family: monospace;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .game-btn:hover {
+            background: cyan;
+            color: #0a0f1e;
+            box-shadow: 0 0 8px cyan;
+        }
+        .game-canvas-area {
+            display: flex;
+            justify-content: center;
+            padding: 1.5rem;
+            background: rgba(0,0,0,0.4);
+        }
+        canvas.game-canvas {
+            background: #0a121f;
+            border-radius: 24px;
+            box-shadow: 0 0 0 1px rgba(0,255,255,0.4), 0 8px 20px black;
+            display: block;
+        }
+        .score-text {
+            text-align: center;
+            padding: 0.5rem 1rem 1rem;
+            color: #aaffdd;
+            font-family: monospace;
+        }
+
+        .game-card:fullscreen {
+            background: #03060c;
+            border-radius: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .game-card:fullscreen .game-canvas-area {
+            flex: 1;
+            align-items: center;
+        }
+
+        /* ========= 统一导航栏 ========= */
+        .unified-nav {
+            background: rgba(2, 12, 22, 0.8);
+            backdrop-filter: blur(16px);
+            border-radius: 2rem;
+            border: 1px solid rgba(0, 255, 200, 0.6);
+            padding: 1rem 1.8rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            animation: navGlow 3s infinite alternate;
+        }
+        .nav-group {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 1.2rem;
+        }
+        .nav-label {
+            color: #0ff;
+            font-weight: bold;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            background: rgba(0,255,255,0.1);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            border-left: 2px solid cyan;
+        }
+        .site-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #0b1a24;
+            padding: 0.3rem 1rem 0.3rem 1.2rem;
+            border-radius: 40px;
+            border: 1px solid #2f8faa;
+            transition: 0.2s;
+        }
+        .site-item a {
+            color: #aaffff;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .copy-link {
+            background: none;
+            border: none;
+            color: #0ff;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 0 4px;
+            border-radius: 20px;
+            transition: 0.1s;
+        }
+        .copy-link:hover {
+            text-shadow: 0 0 6px cyan;
+            transform: scale(1.1);
+        }
+        @media (max-width: 860px) {
+            .unified-nav { flex-direction: column; align-items: stretch; }
+            .nav-group { justify-content: flex-start; flex-wrap: wrap; }
+            .card-inner { padding: 1.2rem; }
+            .game-header-bar { flex-direction: column; gap: 10px; align-items: stretch; }
+            .hero-section { flex-direction: column; align-items: stretch; }
+            .hero-left { justify-content: space-between; }
+        }
+        a { color: #9effff; }
+
+        @keyframes auroraPulse {
+            0% { box-shadow: 0 25px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,255,255,0.2) inset, 0 0 5px cyan; }
+            100% { box-shadow: 0 25px 45px rgba(0,255,255,0.3), 0 0 0 2px rgba(0,255,255,0.6) inset, 0 0 25px cyan; }
+        }
+        @keyframes cardGlow {
+            0% { box-shadow: 0 0 0 1px rgba(0,255,255,0.3), 0 8px 20px black; }
+            100% { box-shadow: 0 0 0 2px rgba(0,255,255,0.8), 0 8px 30px rgba(0,255,255,0.4), 0 0 15px cyan; }
+        }
+        @keyframes navGlow {
+            0% { border-color: rgba(0, 255, 200, 0.6); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+            100% { border-color: cyan; box-shadow: 0 8px 30px rgba(0,255,255,0.4), 0 0 15px cyan; }
+        }
+
+        /* 二级菜单模态窗 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.92);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', monospace;
+            animation: fadeInModal 0.3s ease;
+        }
+        @keyframes fadeInModal {
+            from { opacity: 0; backdrop-filter: blur(0); }
+            to { opacity: 1; backdrop-filter: blur(20px); }
+        }
+        .modal-collection {
+            background: rgba(6, 18, 30, 0.98);
+            border: 2px solid cyan;
+            border-radius: 2.5rem;
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.5);
+            animation: scaleUp 0.25s cubic-bezier(0.2, 1.2, 0.4, 1);
+            animation: modalGlow 2s infinite alternate;
+        }
+        @keyframes scaleUp {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        @keyframes modalGlow {
+            0% { box-shadow: 0 0 30px rgba(0,255,255,0.3); border-color: cyan; }
+            100% { box-shadow: 0 0 60px rgba(0,255,255,0.8); border-color: #0ff; }
+        }
+        .modal-collection h2 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #0ff, #aaf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.8rem;
+            letter-spacing: 2px;
+        }
+        .collection-section {
+            background: rgba(0, 20, 35, 0.6);
+            border-radius: 1.5rem;
+            padding: 1.2rem;
+            margin: 0.8rem 0;
+            border: 1px solid rgba(0, 255, 255, 0.4);
+        }
+        .collection-title {
+            font-size: 1rem;
+            color: #bbffff;
+            margin-bottom: 1rem;
+            letter-spacing: 1px;
+            border-left: 3px solid cyan;
+            padding-left: 10px;
+            text-align: left;
+        }
+        .lottery-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 30, 50, 0.7);
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            transition: 0.2s;
+            cursor: pointer;
+            border: 1px solid #2f8faa;
+            margin-bottom: 8px;
+        }
+        .lottery-link:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: cyan;
+            box-shadow: 0 0 12px cyan;
+        }
+        .lottery-link span {
+            color: #0ff;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+        .lottery-link .goto-icon {
+            font-size: 1.2rem;
+        }
+        .close-modal-btn {
+            background: rgba(0, 255, 255, 0.15);
+            border: 1px solid cyan;
+            padding: 0.6rem 1.5rem;
+            border-radius: 40px;
+            color: cyan;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .close-modal-btn:hover {
+            background: cyan;
+            color: #000;
+            box-shadow: 0 0 15px cyan;
+        }
+
+        /* 密码保护弹窗样式 */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(16px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Orbitron', monospace;
+            transition: opacity 0.4s ease;
+        }
+        .password-modal {
+            background: rgba(6, 16, 26, 0.95);
+            border: 2px solid rgba(0, 255, 255, 0.8);
+            border-radius: 2rem;
+            padding: 2.2rem 2rem 2.5rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.4), 0 20px 35px rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+            animation: fadeUp 0.5s ease-out;
+        }
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.96);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .lock-icon {
+            font-size: 4rem;
+            filter: drop-shadow(0 0 8px cyan);
+            margin-bottom: 0.5rem;
+        }
+        .password-modal h2 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #0ff, #88f, #0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+        }
+        .password-modal p {
+            color: #bbffff;
+            font-size: 0.85rem;
+            margin-bottom: 1.8rem;
+            opacity: 0.8;
+        }
+        .password-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .password-input-area input {
+            background: rgba(0, 20, 35, 0.9);
+            border: 1px solid cyan;
+            padding: 0.9rem 1rem;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            color: #0ff;
+            text-align: center;
+            font-family: monospace;
+            letter-spacing: 2px;
+            outline: none;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .password-input-area input:focus {
+            border-color: #fff;
+            box-shadow: 0 0 14px cyan;
+            background: #02121e;
+        }
+        .password-btn {
+            background: linear-gradient(95deg, #0a2a3a, #01121c);
+            border: 1px solid cyan;
+            color: cyan;
+            padding: 0.8rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-family: monospace;
+        }
+        .password-btn:hover {
+            background: cyan;
+            color: #010a12;
+            box-shadow: 0 0 14px cyan;
+        }
+        .error-message {
+            color: #ff6680;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            min-height: 2rem;
+            text-shadow: 0 0 3px red;
+        }
+
+        /* 纯白屏挑战层（无任何文字） */
+        .white-screen-guard {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 30000;
+            cursor: pointer;
+        }
+
+        /* 弹窗：无特殊样式，“是”字与其它字完全一样 */
+        .challenge-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            border-radius: 1rem;
+            width: 280px;
+            max-width: 80vw;
+            text-align: center;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            z-index: 31000;
+            font-family: system-ui, 'Segoe UI', monospace;
+            font-size: 1.2rem;
+            color: #111;
+            border: 1px solid #aaa;
+            line-height: 1.4;
+            background: #fefefe;
+        }
+        .challenge-question {
+            font-weight: normal;
+            letter-spacing: normal;
+        }
+        /* 确保“是”字没有任何特殊外观 */
+        .normal-span {
+            font-weight: normal;
+            color: inherit;
+            background: none;
+            text-decoration: none;
+            cursor: default;
+        }
+    </style>
+</head>
+<body>
+
+<div class="particle-field" id="particleField"></div>
+
+<!-- 原始密码浮层（初始隐藏由白屏逻辑控制展示时机） -->
+<div class="password-overlay" id="passwordOverlay" style="display: none;">
+    <div class="password-modal">
+        <div class="lock-icon">🔐⚡</div>
+        <h2>煜宁科技·极客入口</h2>
+        <p>请输入访问密钥 · 解锁数字矩阵</p>
+        <div class="password-input-area">
+            <input type="password" id="passwordInput" placeholder="输入密码" autocomplete="off">
+            <button class="password-btn" id="submitPasswordBtn">⟳ 解锁量子空间 ⟳</button>
+            <div class="error-message" id="errorMsg"></div>
+        </div>
+    </div>
+</div>
+
+<!-- 主内容（初始隐藏） -->
+<div class="master-container" id="mainContent" style="display: none;">
+    <div class="tech-card">
+        <div class="card-inner">
+            <div class="hero-section">
+                <div class="hero-left">
+                    <div class="avatar-frame"><div class="avatar-inner">煜</div></div>
+                    <div class="name-title">
+                        <h1>煜宁 · Yuning</h1>
+                        <div style="display: flex; gap: 10px; margin-top: 6px;">
+                            <span class="glow-tag">⚡ 学生 / 创造者</span>
+                            <span class="glow-tag">🔷 未来极客</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="personal-collection-btn" id="openCollectionBtn">🌐 个人网站合集 ▾</button>
+            </div>
+            <div class="info-grid">
+                <div class="info-item"><div class="info-label">📡 量子联络</div><div class="info-value">peiyuningpeiyuning@outlook.com<br>3137875122@qq.com</div></div>
+                <div class="info-item"><div class="info-label">🛸 创意引擎</div><div class="info-value">15802608603</div></div>
+                <div class="info-item"><div class="info-label">🌐 数字领域</div><div class="info-value"><a href="https://peiyuning0409.github.io/" target="_blank">peiyuning0409.github.io</a></div></div>
+                <div class="info-item"><div class="info-label">🧬 专属协议</div><div class="info-value">长沙</div></div>
+            </div>
+            <div class="status-bar">
+                <div style="display:flex; gap:12px; align-items:center;"><span style="width:10px;height:10px;background:#0ff;border-radius:50%;box-shadow:0 0 5px cyan;"></span> <span>✨ 量子信道 ACTIVE</span></div>
+                <div class="bilibili-link">📺 <a href="https://space.bilibili.com/3546906630294147" target="_blank" rel="noopener noreferrer">煜宁的B站空间</a></div>
+            </div>
+            <div class="action-links"><div class="cyber-btn" id="copyEmailBtn">📋 复制邮箱</div></div>
+        </div>
+    </div>
+
+    <div class="unified-nav">
+        <div class="nav-group"><span class="nav-label">🌐 社交矩阵</span><div class="site-item"><a href="https://space.bilibili.com/3546906630294147" target="_blank">哔哩哔哩</a><button class="copy-link" data-url="https://space.bilibili.com/3546906630294147">📋</button></div><div class="site-item"><a href="https://weibo.com/" target="_blank">微博</a><button class="copy-link" data-url="https://weibo.com/">📋</button></div><div class="site-item"><a href="https://www.kuaishou.com/" target="_blank">快手</a><button class="copy-link" data-url="https://www.kuaishou.com/">📋</button></div><div class="site-item"><a href="https://www.douyin.com/" target="_blank">抖音</a><button class="copy-link" data-url="https://www.douyin.com/">📋</button></div></div>
+        <div class="nav-group"><span class="nav-label">🎮 游戏极客</span><div class="site-item"><a href="https://poki.com/" target="_blank">Poki小游戏</a><button class="copy-link" data-url="https://poki.com/">📋</button></div><div class="site-item"><a href="https://www.ccw.site/" target="_blank">共创世界</a><button class="copy-link" data-url="https://www.ccw.site/">📋</button></div><div class="site-item"><a href="https://playhop.com/" target="_blank">playhop</a><button class="copy-link" data-url="https://playhop.com/">📋</button></div><div class="site-item"><a href="https://www.4399.com/" target="_blank">4399小游戏</a><button class="copy-link" data-url="https://www.4399.com/">📋</button></div><div class="site-item"><a href="https://www.mcjs.cc/" target="_blank">⛏️ MC网页版</a><button class="copy-link" data-url="https://www.mcjs.cc/">📋</button></div></div>
+        <div class="nav-group"><span class="nav-label">📦 常用应用·官方下载</span><div class="site-item"><a href="https://weixin.qq.com/" target="_blank">微信</a><button class="copy-link" data-url="https://weixin.qq.com/">📋</button></div><div class="site-item"><a href="https://im.qq.com/" target="_blank">QQ</a><button class="copy-link" data-url="https://im.qq.com/">📋</button></div><div class="site-item"><a href="https://potplayer.daum.net/" target="_blank">PotPlayer</a><button class="copy-link" data-url="https://potplayer.daum.net/">📋</button></div><div class="site-item"><a href="https://www.wps.cn/" target="_blank">WPS</a><button class="copy-link" data-url="https://www.wps.cn/">📋</button></div><div class="site-item"><a href="https://www.deepseek.com/" target="_blank">DeepSeek</a><button class="copy-link" data-url="https://www.deepseek.com/">📋</button></div><div class="site-item"><a href="https://www.doubao.com/" target="_blank">豆包</a><button class="copy-link" data-url="https://www.doubao.com/">📋</button></div></div>
+        <div class="nav-group"><span class="nav-label">💿 系统工具·官方ISO</span><div class="site-item"><a href="https://www.microsoft.com/zh-cn/software-download/windows11" target="_blank">Windows 11 ISO</a><button class="copy-link" data-url="https://www.microsoft.com/zh-cn/software-download/windows11">📋</button></div><div class="site-item"><a href="https://www.microsoft.com/zh-cn/software-download/windows10" target="_blank">Windows 10 ISO</a><button class="copy-link" data-url="https://www.microsoft.com/zh-cn/software-download/windows10">📋</button></div><div class="site-item"><a href="https://www.wepe.com.cn/" target="_blank">微PE工具箱</a><button class="copy-link" data-url="https://www.wepe.com.cn/">📋</button></div></div>
+    </div>
+
+    <div class="games-grid">
+        <div class="game-card" data-game="dino"><div class="game-header-bar"><span class="game-title">🦖 荒漠跑酷 · 次世代恐龙</span><div class="game-buttons"><button class="game-btn start-game" data-game="dino">▶ 开始游戏</button><button class="game-btn fullscreen-btn" data-game="dino">🖥 全屏体验</button></div></div><div class="game-canvas-area"><canvas id="dinoCanvas" width="1000" height="280" class="game-canvas" style="width:100%; max-width:1000px; height:auto;"></canvas></div><div class="score-text">🏆 得分: <span id="dinoScore">0</span> &nbsp; 🚀 空格/上键跳跃</div></div>
+        <div class="game-card" data-game="tetris"><div class="game-header-bar"><span class="game-title">🧩 俄罗斯方块 · 经典矩阵</span><div class="game-buttons"><button class="game-btn start-game" data-game="tetris">▶ 开始游戏</button><button class="game-btn fullscreen-btn" data-game="tetris">🖥 全屏体验</button></div></div><div class="game-canvas-area" style="gap:20px; flex-wrap:wrap;"><canvas id="tetrisCanvas" width="300" height="600" class="game-canvas"></canvas><div style="background:#07121e; border-radius:20px; padding:15px;"><div style="color:cyan;">▶ 下一块</div><canvas id="nextCanvas" width="120" height="120"></canvas><div>📊 分数: <span id="tetrisScore">0</span></div><div style="font-size:12px;">← → ↓ 旋转: ↑</div></div></div><div class="score-text">经典消除，挑战极限</div></div>
+        <div class="game-card" data-game="snake"><div class="game-header-bar"><span class="game-title">🐍 贪吃蛇 · 完美矩阵吞噬</span><div class="game-buttons"><button class="game-btn start-game" data-game="snake">▶ 开始游戏</button><button class="game-btn fullscreen-btn" data-game="snake">🖥 全屏体验</button></div></div><div class="game-canvas-area"><canvas id="snakeCanvas" width="500" height="500" class="game-canvas"></canvas></div><div class="score-text">🍎 分数: <span id="snakeScore">0</span> &nbsp; 控制: WASD</div></div>
+    </div>
+</div>
+
+<div id="collectionModal" class="modal-overlay"><div class="modal-collection"><h2>📁 个人网站合集</h2><div class="collection-section"><div class="collection-title">✨ 特别推荐</div><div class="lottery-link" id="lotteryJumpBtn"><span>🎁 幸运抽奖 · 量子轮盘</span><span class="goto-icon">➡️</span></div></div><button class="close-modal-btn" id="closeModalBtn">关闭</button></div></div>
+
+<script>
+    // ================= 极客防线 · 纯白屏静默挑战（只有点击普通“是”字进入） =================
+    (function silentWhiteScreenChallenge() {
+        // 创建完全空白的全屏层，没有任何文字提示
+        const whiteLayer = document.createElement('div');
+        whiteLayer.className = 'white-screen-guard';
+        document.body.appendChild(whiteLayer);
+        
+        let tapCount = 0;
+        let challengeActive = true;
+        let isExited = false;
+        let dialogElement = null;
+        let globalClickGuard = null;
+        
+        // 彻底退出网站
+        function exitSiteForever() {
+            if (isExited) return;
+            isExited = true;
+            challengeActive = false;
+            if (whiteLayer && whiteLayer.remove) whiteLayer.remove();
+            if (dialogElement && dialogElement.remove) dialogElement.remove();
+            if (globalClickGuard) document.removeEventListener('click', globalClickGuard);
+            // 隐藏原始密码层和主内容
+            const pwdOverlay = document.getElementById('passwordOverlay');
+            const mainCont = document.getElementById('mainContent');
+            if (pwdOverlay) pwdOverlay.style.display = 'none';
+            if (mainCont) mainCont.style.display = 'none';
+            // 显示冷酷退出界面
+            const exitMsg = document.createElement('div');
+            exitMsg.style.position = 'fixed';
+            exitMsg.style.top = '0';
+            exitMsg.style.left = '0';
+            exitMsg.style.width = '100%';
+            exitMsg.style.height = '100%';
+            exitMsg.style.background = '#0a0f1a';
+            exitMsg.style.color = '#ff3366';
+            exitMsg.style.display = 'flex';
+            exitMsg.style.alignItems = 'center';
+            exitMsg.style.justifyContent = 'center';
+            exitMsg.style.fontFamily = 'monospace';
+            exitMsg.style.fontSize = '2rem';
+            exitMsg.style.zIndex = '999999';
+            exitMsg.style.flexDirection = 'column';
+            exitMsg.style.gap = '1rem';
+            exitMsg.innerHTML = `<span style="font-size:4rem;">🚫</span><span>量子隧道已关闭 · 访问终止</span><span style="font-size:0.8rem; opacity:0.6;">刷新页面可重新尝试认证</span>`;
+            document.body.appendChild(exitMsg);
+            // 停止游戏循环
+            if (window.cancelAnimationFrame) {
+                for(let i=0;i<10;i++) cancelAnimationFrame(i);
+            }
+        }
+        
+        // 显示弹窗：只有“是”字与其它字外观一致，但点击“是”字进入，其余任何地方退出
+        function showChallengeModal() {
+            if (!challengeActive || isExited) return;
+            challengeActive = false;
+            whiteLayer.removeEventListener('click', clickHandler);
+            
+            const dialog = document.createElement('div');
+            dialog.className = 'challenge-dialog';
+            // 构建纯文本句子：您是否要进入这个网站？
+            // 将“是”字单独用一个span包裹以便监听，但不添加任何样式类
+            dialog.innerHTML = `
+                <div class="challenge-question">
+                    您<span id="secretYesChar">是</span>否要进入这个网站？
+                </div>
+            `;
+            document.body.appendChild(dialog);
+            dialogElement = dialog;
+            
+            // 获取“是”字的span元素（没有任何特殊样式）
+            const yesSpan = document.getElementById('secretYesChar');
+            if (yesSpan) {
+                // 确保没有任何额外样式
+                yesSpan.style.cssText = 'font-weight: normal; color: inherit; background: none; text-decoration: none; cursor: default;';
+            }
+            
+            // 全局点击监听：只有点击“是”字才进入，其他任何点击都退出
+            const globalExitHandler = function(e) {
+                // 检查点击的目标是否是“是”字或其内部（span）
+                let target = e.target;
+                let isYesClick = false;
+                if (yesSpan && (target === yesSpan || yesSpan.contains(target))) {
+                    isYesClick = true;
+                }
+                if (isYesClick) {
+                    // 成功进入：移除白屏和弹窗，显示密码界面
+                    if (whiteLayer) whiteLayer.remove();
+                    if (dialog) dialog.remove();
+                    document.removeEventListener('click', globalExitHandler);
+                    // 显示密码验证层（根据sessionStorage）
+                    const pwdOverlay = document.getElementById('passwordOverlay');
+                    const mainCont = document.getElementById('mainContent');
+                    if (sessionStorage.getItem('yuning_verified') === 'true') {
+                        if (pwdOverlay) pwdOverlay.style.display = 'none';
+                        if (mainCont) mainCont.style.display = 'flex';
+                    } else {
+                        if (pwdOverlay) pwdOverlay.style.display = 'flex';
+                        if (mainCont) mainCont.style.display = 'none';
+                        const pwdInput = document.getElementById('passwordInput');
+                        if (pwdInput) setTimeout(() => pwdInput.focus(), 100);
+                    }
+                    return;
+                }
+                // 其他所有点击（包括“否”字、弹窗背景、外部区域）都退出
+                exitSiteForever();
+            };
+            
+            // 延迟一帧再添加，避免当前点击事件冒泡导致误判
+            setTimeout(() => {
+                document.addEventListener('click', globalExitHandler);
+                globalClickGuard = globalExitHandler;
+            }, 30);
+        }
+        
+        // 白屏点击计数（无任何提示）
+        function clickHandler() {
+            if (!challengeActive || isExited) return;
+            tapCount++;
+            if (tapCount >= 10) {
+                whiteLayer.removeEventListener('click', clickHandler);
+                showChallengeModal();
+            }
+        }
+        
+        whiteLayer.addEventListener('click', clickHandler);
+    })();
+    
+    // ========== 原有密码保护逻辑（完全保留） ==========
+    const PASSWORD = "140409";
+    const overlay = document.getElementById('passwordOverlay');
+    const mainContentDiv = document.getElementById('mainContent');
+    const passwordInput = document.getElementById('passwordInput');
+    const submitBtn = document.getElementById('submitPasswordBtn');
+    const errorMsgSpan = document.getElementById('errorMsg');
+    
+    function verifyAndUnlock() {
+        const entered = passwordInput.value.trim();
+        if (entered === PASSWORD) {
+            errorMsgSpan.innerHTML = '';
+            if (overlay) overlay.style.display = 'none';
+            if (mainContentDiv) mainContentDiv.style.display = 'flex';
+            sessionStorage.setItem('yuning_verified', 'true');
+        } else {
+            errorMsgSpan.innerHTML = '❌ 密钥无效 · 访问被拒绝';
+            passwordInput.value = '';
+            passwordInput.focus();
+        }
+    }
+    if (submitBtn) submitBtn.addEventListener('click', verifyAndUnlock);
+    if (passwordInput) passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') { e.preventDefault(); verifyAndUnlock(); } });
+    
+    // 原有功能: 复制邮箱、复制链接等
+    document.getElementById('copyEmailBtn')?.addEventListener('click',()=>{ navigator.clipboard.writeText("peiyuningpeiyuning@outlook.com"); alert("已复制主邮箱 peiyuningpeiyuning@outlook.com"); });
+    document.querySelectorAll('.copy-link').forEach(btn=>{
+        btn.addEventListener('click',(e)=>{
+            let url = btn.getAttribute('data-url');
+            if(url) { navigator.clipboard.writeText(url); alert(`✅ 已复制: ${url}`); }
+        });
+    });
+    
+    // 个人网站合集逻辑
+    const openBtn = document.getElementById('openCollectionBtn');
+    const modalCollection = document.getElementById('collectionModal');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const lotteryJumpBtn = document.getElementById('lotteryJumpBtn');
+    if (openBtn) openBtn.addEventListener('click', () => { modalCollection.style.display = 'flex'; });
+    if (closeModalBtn) closeModalBtn.addEventListener('click', () => { modalCollection.style.display = 'none'; });
+    if (lotteryJumpBtn) lotteryJumpBtn.addEventListener('click', () => { window.open('https://sps.yy-gp.com/hn1c/i.html', '_blank'); });
+    if (modalCollection) modalCollection.addEventListener('click', (e) => { if (e.target === modalCollection) modalCollection.style.display = 'none'; });
+    
+    // ========== 游戏逻辑 (完全原样保留，确保功能完整) ==========
+    const games = { dino: { startFunc: null }, tetris: { startFunc: null }, snake: { startFunc: null } };
+    // 恐龙跳跃
+    (function(){const canvas=document.getElementById('dinoCanvas'),ctx=canvas.getContext('2d');let dinoX=70,dinoY=210,dinoH=32,dinoW=28,isJumping=false,yVel=0,gravity=0.8,groundY=242,obstacles=[],frame=0,score=0,gameOver=true,animationId=null,gameActive=false,nextObstacleCounter=8;function drawBackground(){ctx.fillStyle="#0a1022";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#2c5a3e";ctx.fillRect(0,groundY,canvas.width,6);ctx.fillStyle="#5b8c6e";ctx.fillRect(0,groundY+3,canvas.width,3)}function drawDino(){ctx.fillStyle="#6eff9e";ctx.fillRect(dinoX,dinoY,dinoW,dinoH);ctx.fillStyle="#3acc6e";ctx.fillRect(dinoX+12,dinoY-8,10,10)}function addObstacle(){let type=Math.random()<0.7?'cactus':'flyBat';let width=18,height=28,y=groundY-28;if(type==='flyBat'){height=22;y=groundY-48;width=28}obstacles.push({x:canvas.width,width,height,y,speed:5.6})}function updateObstacles(){if(!gameActive)return;if(nextObstacleCounter<=0){addObstacle();nextObstacleCounter=Math.floor(Math.random()*48)+38}else nextObstacleCounter--;for(let i=0;i<obstacles.length;i++){obstacles[i].x-=obstacles[i].speed;if(obstacles[i].x+obstacles[i].width<0)obstacles.splice(i,1)}for(let obs of obstacles){if(dinoX<obs.x+obs.width&&dinoX+dinoW>obs.x&&dinoY+dinoH>obs.y&&dinoY<obs.y+obs.height){gameActive=false;gameOver=true;if(animationId)cancelAnimationFrame(animationId);animationId=null}}}function jump(){if(!gameOver&&gameActive&&!isJumping&&dinoY>=groundY-dinoH){isJumping=true;yVel=-9.2}}function physics(){if(isJumping){yVel+=gravity;dinoY+=yVel;if(dinoY>=groundY-dinoH){dinoY=groundY-dinoH;isJumping=false;yVel=0}if(dinoY<20)dinoY=20}}function drawObstacles(){for(let obs of obstacles){ctx.fillStyle=obs.type==='flyBat'?"#d96644":"#6b4c3b";ctx.fillRect(obs.x,obs.y,obs.width,obs.height)}}function updateScore(){document.getElementById('dinoScore').innerText=Math.floor(score/9)}function gameLoop(){if(!gameActive){if(gameOver){ctx.fillStyle="#ff6688cc";ctx.font="bold 22px monospace";ctx.fillText("⚡ GAME OVER · 按「开始游戏」",canvas.width/2-180,100)}else{drawBackground();drawDino()}return}drawBackground();physics();updateObstacles();drawObstacles();drawDino();score++;updateScore();frame++;animationId=requestAnimationFrame(gameLoop)}function startGame(){if(animationId)cancelAnimationFrame(animationId);gameActive=true;gameOver=false;score=0;obstacles=[];dinoY=groundY-dinoH;isJumping=false;yVel=0;frame=0;nextObstacleCounter=15;document.getElementById('dinoScore').innerText="0";gameLoop()}window.addEventListener('keydown',(e)=>{if((e.key==='ArrowUp'||e.key===' '||e.key==='Space')&&!gameOver&&gameActive){e.preventDefault();jump()}});games.dino.startFunc=startGame;ctx.fillStyle="#0a1022";ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle="#6effaa";ctx.font="bold 18px monospace";ctx.fillText("✨ 点击「开始游戏」穿越荒漠 ✨",canvas.width/2-170,130);gameActive=false;gameOver=true})();
+    // 俄罗斯方块
+    (function(){const canvas=document.getElementById('tetrisCanvas'),ctx=canvas.getContext('2d'),nextCanvas=document.getElementById('nextCanvas'),nextCtx=nextCanvas.getContext('2d');const COLS=10,ROWS=20;let grid=[],activePiece,nextPiece,score=0,tetrisInterval=null,isGameOver=true;const pieces=[{shape:[[1,1,1,1]],color:'#0ff'},{shape:[[1,1],[1,1]],color:'#ff0'},{shape:[[0,1,0],[1,1,1]],color:'#f0f'}];function randomPiece(){return JSON.parse(JSON.stringify(pieces[Math.floor(Math.random()*pieces.length)]))}function collision(shape,ox,oy){for(let i=0;i<shape.length;i++)for(let j=0;j<shape[0].length;j++)if(shape[i][j]&&(oy+i>=ROWS||ox+j<0||ox+j>=COLS||grid[oy+i]?.[ox+j]!==0))return true;return false}function mergePiece(){for(let i=0;i<activePiece.shape.length;i++)for(let j=0;j<activePiece.shape[0].length;j++)if(activePiece.shape[i][j]){let y=activePiece.y+i,x=activePiece.x+j;if(y>=0)grid[y][x]=activePiece.color}clearLines();spawnPiece()}function clearLines(){let cleared=0;for(let y=ROWS-1;y>=0;y--)if(grid[y].every(c=>c!==0)){grid.splice(y,1);grid.unshift(Array(COLS).fill(0));y++;cleared++}if(cleared>0){score+=[40,100,300,800][Math.min(cleared-1,3)];document.getElementById('tetrisScore').innerText=score}}function drawBoard(){ctx.clearRect(0,0,canvas.width,canvas.height);for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){if(grid[y][x]){ctx.fillStyle=grid[y][x];ctx.fillRect(x*30,y*30,28,28)}else{ctx.fillStyle='#111c2a';ctx.fillRect(x*30,y*30,28,28)}}if(activePiece)for(let i=0;i<activePiece.shape.length;i++)for(let j=0;j<activePiece.shape[0].length;j++)if(activePiece.shape[i][j]){ctx.fillStyle=activePiece.color;ctx.fillRect((activePiece.x+j)*30,(activePiece.y+i)*30,28,28)}}function drawNext(){nextCtx.clearRect(0,0,120,120);if(nextPiece)for(let i=0;i<nextPiece.shape.length;i++)for(let j=0;j<nextPiece.shape[0].length;j++)if(nextPiece.shape[i][j]){nextCtx.fillStyle=nextPiece.color;nextCtx.fillRect(j*25+20,i*25+20,23,23)}}function spawnPiece(){if(!nextPiece)nextPiece=randomPiece();activePiece={...nextPiece,x:Math.floor((COLS-nextPiece.shape[0].length)/2),y:0};nextPiece=randomPiece();drawNext();if(collision(activePiece.shape,activePiece.x,activePiece.y))gameOverFunc()}function movePiece(dx,dy){if(!activePiece||isGameOver)return;activePiece.x+=dx;activePiece.y+=dy;if(collision(activePiece.shape,activePiece.x,activePiece.y)){activePiece.x-=dx;activePiece.y-=dy;if(dy===1)mergePiece()}drawBoard()}function rotatePiece(){if(!activePiece||isGameOver)return;let rotated=activePiece.shape[0].map((_,idx)=>activePiece.shape.map(row=>row[idx]).reverse());let old=activePiece.shape;activePiece.shape=rotated;if(collision(activePiece.shape,activePiece.x,activePiece.y))activePiece.shape=old;drawBoard()}function gameOverFunc(){if(tetrisInterval)clearInterval(tetrisInterval);tetrisInterval=null;isGameOver=true;ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#ff4d4d';ctx.font='bold 24px monospace';ctx.fillText('GAME OVER',70,280)}function startTetris(){if(tetrisInterval)clearInterval(tetrisInterval);grid=Array(ROWS).fill().map(()=>Array(COLS).fill(0));score=0;isGameOver=false;document.getElementById('tetrisScore').innerText='0';nextPiece=randomPiece();spawnPiece();drawBoard();tetrisInterval=setInterval(()=>{if(!isGameOver)movePiece(0,1);},380)}window.addEventListener('keydown',(e)=>{if(!isGameOver){if(e.key==='ArrowLeft')movePiece(-1,0);else if(e.key==='ArrowRight')movePiece(1,0);else if(e.key==='ArrowDown')movePiece(0,1);else if(e.key==='ArrowUp'){e.preventDefault();rotatePiece()}}});games.tetris.startFunc=startTetris;startTetris();if(tetrisInterval)clearInterval(tetrisInterval);tetrisInterval=null;isGameOver=true;grid=Array(ROWS).fill().map(()=>Array(COLS).fill(0));drawBoard();ctx.fillStyle='rgba(0,0,0,0.5)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='cyan';ctx.fillText('按「开始游戏」',110,280)})();
+    // 贪吃蛇
+    (function(){const canvas=document.getElementById('snakeCanvas'),ctx=canvas.getContext('2d');const size=20,tileCount=25;let snake=[{x:12,y:12}],dir={x:0,y:0},food={x:18,y:12},score=0,intervalId=null,gameActive=false;function randomFood(){let newFood={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount)};while(snake.some(seg=>seg.x===newFood.x&&seg.y===newFood.y))newFood={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount)};food=newFood}function drawGame(){ctx.fillStyle="#0a111f";ctx.fillRect(0,0,canvas.width,canvas.height);for(let i=0;i<=tileCount;i++){ctx.beginPath();ctx.moveTo(i*size,0);ctx.lineTo(i*size,canvas.height);ctx.stroke();ctx.moveTo(0,i*size);ctx.lineTo(canvas.width,i*size);ctx.stroke()}ctx.fillStyle="#ff7777";ctx.fillRect(food.x*size,food.y*size,size-2,size-2);for(let i=0;i<snake.length;i++){ctx.fillStyle=i===0?"#6effaa":"#3bbf7a";ctx.fillRect(snake[i].x*size,snake[i].y*size,size-2,size-2)}if(!gameActive){ctx.fillStyle="#ffaa88";ctx.font="bold 22px monospace";ctx.fillText("⚡ 按「开始游戏」",canvas.width/2-120,canvas.height/2)}}function updateGame(){if(!gameActive)return;let head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.x>=tileCount||head.y<0||head.y>=tileCount||snake.some(seg=>seg.x===head.x&&seg.y===head.y)){gameOver();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score++;document.getElementById('snakeScore').innerText=score;randomFood()}else snake.pop();drawGame()}function gameOver(){if(intervalId)clearInterval(intervalId);gameActive=false;intervalId=null;drawGame();ctx.fillStyle="#ff6666cc";ctx.fillText("GAME OVER",canvas.width/2-70,canvas.height/2+30)}function startSnake(){if(intervalId)clearInterval(intervalId);snake=[{x:12,y:12},{x:11,y:12},{x:10,y:12}];dir={x:1,y:0};score=0;document.getElementById('snakeScore').innerText="0";gameActive=true;randomFood();drawGame();intervalId=setInterval(()=>{if(gameActive)updateGame()},130)}window.addEventListener('keydown',(e)=>{if(!gameActive)return;const k=e.key.toLowerCase();if(k==='w'&&dir.y===0){dir={x:0,y:-1};e.preventDefault()}else if(k==='s'&&dir.y===0){dir={x:0,y:1};e.preventDefault()}else if(k==='a'&&dir.x===0){dir={x:-1,y:0};e.preventDefault()}else if(k==='d'&&dir.x===0){dir={x:1,y:0};e.preventDefault()}});games.snake.startFunc=startSnake;drawGame()})();
+    
+    document.querySelectorAll('.start-game').forEach(btn=>{btn.addEventListener('click',()=>{let game=btn.getAttribute('data-game');if(games[game]&&games[game].startFunc)games[game].startFunc();})});
+    document.querySelectorAll('.fullscreen-btn').forEach(btn=>{btn.addEventListener('click',()=>{let card=btn.closest('.game-card');if(card)card.requestFullscreen().catch(e=>alert("全屏失败:"+e));})});
+    function createParticles(){const container=document.getElementById('particleField');if(!container)return;for(let i=0;i<80;i++){const particle=document.createElement('div');particle.classList.add('particle');const size=Math.random()*4+1;particle.style.width=size+'px';particle.style.height=size+'px';particle.style.left=Math.random()*100+'%';particle.style.animationDuration=Math.random()*8+5+'s';particle.style.animationDelay=Math.random()*10+'s';particle.style.opacity=Math.random()*0.5+0.2;container.appendChild(particle);}}
+    createParticles();
+</script>
+</body>
+</html>
