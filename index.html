@@ -461,6 +461,7 @@
         }
         .lottery-link .goto-icon {
             font-size: 1.2rem;
+            cursor: pointer;
         }
         .close-modal-btn {
             background: rgba(0, 255, 255, 0.15);
@@ -696,7 +697,23 @@
     </div>
 </div>
 
-<div id="collectionModal" class="modal-overlay"><div class="modal-collection"><h2>📁 个人网站合集</h2><div class="collection-section"><div class="collection-title">✨ 特别推荐</div><div class="lottery-link" id="lotteryJumpBtn"><span>🎁 幸运抽奖 · 量子轮盘</span><span class="goto-icon">➡️</span></div></div><button class="close-modal-btn" id="closeModalBtn">关闭</button></div></div>
+<div id="collectionModal" class="modal-overlay">
+    <div class="modal-collection">
+        <h2>📁 个人网站合集</h2>
+        <div class="collection-section">
+            <div class="collection-title">✨ 特别推荐</div>
+            <!-- 修改后的抽奖行：增加复制按钮，调整布局 -->
+            <div class="lottery-link" id="lotteryJumpBtn" style="justify-content: space-between;">
+                <span>🎁 幸运抽奖 · 量子轮盘</span>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <span class="goto-icon" style="cursor:pointer;">➡️</span>
+                    <button class="copy-link" data-url="https://peiyuning0409.github.io/chou-jiang/" style="background:none;border:none;color:#0ff;cursor:pointer;font-size:1.2rem;padding:0 4px;">📋</button>
+                </div>
+            </div>
+        </div>
+        <button class="close-modal-btn" id="closeModalBtn">关闭</button>
+    </div>
+</div>
 
 <script>
     // ================= 极客防线 · 纯白屏静默挑战（只有点击普通“是”字进入） =================
@@ -866,7 +883,16 @@
     const lotteryJumpBtn = document.getElementById('lotteryJumpBtn');
     if (openBtn) openBtn.addEventListener('click', () => { modalCollection.style.display = 'flex'; });
     if (closeModalBtn) closeModalBtn.addEventListener('click', () => { modalCollection.style.display = 'none'; });
-    if (lotteryJumpBtn) lotteryJumpBtn.addEventListener('click', () => { window.open('https://sps.yy-gp.com/hn1c/i.html', '_blank'); });
+    // 修改：只对箭头绑定跳转，复制按钮由全局复制逻辑处理
+    if (lotteryJumpBtn) {
+        const arrow = lotteryJumpBtn.querySelector('.goto-icon');
+        if (arrow) {
+            arrow.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.open('https://peiyuning0409.github.io/chou-jiang/', '_blank');
+            });
+        }
+    }
     if (modalCollection) modalCollection.addEventListener('click', (e) => { if (e.target === modalCollection) modalCollection.style.display = 'none'; });
     
     // ========== 游戏逻辑 (完全原样保留，确保功能完整) ==========
